@@ -6,7 +6,7 @@
   "scripts": {
     "typecheck": "tsgo --noEmit",
     "test": "node --import tsx --test test/*.test.ts",
-    "example": "tsx examples/01-search-agent.ts"
+    "example:01": "node --env-file-if-exists=.env --import tsx examples/01-naked-call.ts"
   },
   "dependencies": { "zod": "^4.0.0" },
   "devDependencies": {
