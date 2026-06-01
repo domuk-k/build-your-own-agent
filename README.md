@@ -1,10 +1,10 @@
-# build-your-own-smolagents
+# build-your-own-agent
 
-> Build a [smolagents](https://github.com/huggingface/smolagents)-style AI agent **from an empty file**, one small building block at a time — in under 500 lines of TypeScript, with near-zero dependencies.
+> Build an AI agent **from an empty file**, one small building block at a time — in under 500 lines of TypeScript, with near-zero dependencies.
 
 A free, bilingual (한국어/English) course. You write every layer yourself: the LLM call, the loop, memory, tools, a tool-calling agent, and finally a **CodeAgent** that writes and runs its own code. No agent framework, no AI SDK — just `fetch` and one tiny library (`zod`) for tool schemas.
 
-This is a **minimal, from-scratch reimplementation of smolagents' core ideas** for learning — not a drop-in replacement. The package you build is called `smallagentjs`.
+Inspired by [smolagents](https://github.com/huggingface/smolagents) — not a reimplementation of it, but the same spirit: the smallest agent that still teaches the real ideas. The package you build is called `smallagentjs`.
 
 ---
 
