@@ -15,6 +15,7 @@ import type { Tool } from "./types.ts";
 import { callLLMWithTools } from "./llm.ts";
 import { startMemory, remember } from "./memory.ts";
 import { runTool } from "./tools.ts";
+import { buildSystemPrompt } from "./prompts.ts";
 
 const MAX_TURNS = 10;
 
@@ -31,11 +32,7 @@ export async function runAgent(task: string, tools: Tool[]): Promise<string> {
   const allTools = [...tools, finalAnswer];
   const byName = new Map(allTools.map((t) => [t.name, t]));
 
-  const memory = startMemory(
-    "You are an agent that solves the task using the available tools. " +
-      "Call a tool when you need information. " +
-      "When the task is solved, call the `final_answer` tool with your answer.",
-  );
+  const memory = startMemory(buildSystemPrompt(tools));
   remember(memory, { role: "user", content: task });
 
   for (let turn = 1; turn <= MAX_TURNS; turn++) {
