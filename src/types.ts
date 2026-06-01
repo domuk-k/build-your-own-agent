@@ -6,6 +6,8 @@
 // so you can learn the vocabulary before you read any behavior.
 // ─────────────────────────────────────────────────────────────
 
+import type { ZodType } from "zod";
+
 /** Who is speaking in a conversation. */
 export type Role = "system" | "user" | "assistant" | "tool";
 
@@ -13,4 +15,17 @@ export type Role = "system" | "user" | "assistant" | "tool";
 export type Message = {
   role: Role;
   content: string;
+};
+
+/**
+ * A capability the agent is allowed to call.
+ * - `schema` validates the arguments the model sends (a zod schema).
+ * - `run` does the work and returns text the agent reads back.
+ * (Added in Lesson 04.)
+ */
+export type Tool = {
+  name: string;
+  description: string;
+  schema: ZodType;
+  run: (args: any) => string | Promise<string>;
 };
