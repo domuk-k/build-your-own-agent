@@ -11,10 +11,21 @@ import type { ZodType } from "zod";
 /** Who is speaking in a conversation. */
 export type Role = "system" | "user" | "assistant" | "tool";
 
+/** A request from the model to call one tool with some arguments. (Lesson 05) */
+export type ToolCall = {
+  id: string;
+  name: string;
+  arguments: Record<string, unknown>;
+};
+
 /** One message in a conversation. The whole framework moves these around. */
 export type Message = {
   role: Role;
   content: string;
+  /** Set on assistant messages that ask to call tools. (Lesson 05) */
+  toolCalls?: ToolCall[];
+  /** Set on tool-role messages, linking a result back to its call. (Lesson 05) */
+  toolCallId?: string;
 };
 
 /**
