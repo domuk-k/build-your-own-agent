@@ -16,6 +16,7 @@ import { callLLMWithTools } from "./llm.ts";
 import { startMemory, remember } from "./memory.ts";
 import { runTool } from "./tools.ts";
 import { buildSystemPrompt } from "./prompts.ts";
+import { logStep } from "./monitor.ts";
 
 const MAX_TURNS = 10;
 
@@ -50,12 +51,16 @@ export async function runAgent(task: string, tools: Tool[]): Promise<string> {
 
     for (const call of reply.toolCalls) {
       if (call.name === "final_answer") {
-        return String((call.arguments as { answer: string }).answer);
+        const answer = String((call.arguments as { answer: string }).answer);
+        logStep("final_answer", answer);
+        return answer;
       }
+      logStep("tool", `${call.name}(${JSON.stringify(call.arguments)})`);
       const tool = byName.get(call.name);
       const result = tool
         ? await runTool(tool, call.arguments)
         : `Error: unknown tool "${call.name}"`;
+      logStep("observation", result);
       remember(memory, { role: "tool", toolCallId: call.id, content: result });
     }
   }
