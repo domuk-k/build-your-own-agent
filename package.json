@@ -6,7 +6,8 @@
   "scripts": {
     "typecheck": "tsgo --noEmit",
     "test": "node --import tsx --test test/*.test.ts",
-    "example:01": "node --env-file-if-exists=.env --import tsx examples/01-naked-call.ts"
+    "example:01": "node --env-file-if-exists=.env --import tsx examples/01-naked-call.ts",
+    "example:02": "node --env-file-if-exists=.env --import tsx examples/02-the-loop.ts"
   },
   "dependencies": { "zod": "^4.0.0" },
   "devDependencies": {
