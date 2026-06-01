@@ -15,7 +15,8 @@
     "example:07": "node --env-file-if-exists=.env --import tsx examples/07-system-prompt.ts",
     "example:08": "node --env-file-if-exists=.env --import tsx examples/08-monitoring.ts",
     "example:10": "node --env-file-if-exists=.env --import tsx examples/10-the-sandbox.ts",
-    "example:11": "node --env-file-if-exists=.env --import tsx examples/11-code-agent.ts"
+    "example:11": "node --env-file-if-exists=.env --import tsx examples/11-code-agent.ts",
+    "example:12": "node --env-file-if-exists=.env --import tsx examples/12-a-real-agent.ts"
   },
   "dependencies": { "zod": "^4.0.0" },
   "devDependencies": {
