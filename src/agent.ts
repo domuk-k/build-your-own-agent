@@ -1,15 +1,16 @@
 // ─────────────────────────────────────────────────────────────
-// Lesson 05 — ToolCallingAgent
+// Lesson 05 — ToolCallingAgent   (Lesson 06 adds explicit termination)
 //
 // The simple loop from Lesson 02, grown up. Same skeleton — call the
-// model, decide whether to stop — but now the model can ask to call
-// tools. Each turn we either run the tools it requested and loop
-// again, or (if it just talked) return that text as the answer.
+// model, decide whether to stop — but now the model calls tools.
 //
-// Lesson 06 will replace "it just talked = done" with an explicit
-// final_answer tool. For now, this is the smallest correct version.
+// Lesson 06: instead of guessing "it stopped calling tools, so it must
+// be done", we give the agent a real `final_answer` tool. The loop ends
+// only when the model explicitly calls it. Termination is now a tool
+// call, not a heuristic.
 // ─────────────────────────────────────────────────────────────
 
+import { z } from "zod";
 import type { Tool } from "./types.ts";
 import { callLLMWithTools } from "./llm.ts";
 import { startMemory, remember } from "./memory.ts";
@@ -17,25 +18,43 @@ import { runTool } from "./tools.ts";
 
 const MAX_TURNS = 10;
 
-/** Run an agent that can call the given tools until it has an answer. */
+/** The built-in tool that ends the loop and returns the answer. */
+const finalAnswer: Tool = {
+  name: "final_answer",
+  description: "Call this with your final answer once the task is solved.",
+  schema: z.object({ answer: z.string() }),
+  run: (args) => args.answer,
+};
+
+/** Run an agent that can call the given tools until it calls final_answer. */
 export async function runAgent(task: string, tools: Tool[]): Promise<string> {
-  const byName = new Map(tools.map((t) => [t.name, t]));
+  const allTools = [...tools, finalAnswer];
+  const byName = new Map(allTools.map((t) => [t.name, t]));
 
   const memory = startMemory(
     "You are an agent that solves the task using the available tools. " +
-      "Call a tool when you need information; answer in words when you are done.",
+      "Call a tool when you need information. " +
+      "When the task is solved, call the `final_answer` tool with your answer.",
   );
   remember(memory, { role: "user", content: task });
 
   for (let turn = 1; turn <= MAX_TURNS; turn++) {
-    const reply = await callLLMWithTools(memory, tools);
+    const reply = await callLLMWithTools(memory, allTools);
     remember(memory, reply);
 
-    // No tool calls means the model answered directly — we're done.
-    if (!reply.toolCalls?.length) return reply.content;
+    if (!reply.toolCalls?.length) {
+      // The model talked instead of acting — steer it back to a tool.
+      remember(memory, {
+        role: "user",
+        content: "Use a tool, or call final_answer to finish.",
+      });
+      continue;
+    }
 
-    // Otherwise run each requested tool and feed its result back in.
     for (const call of reply.toolCalls) {
+      if (call.name === "final_answer") {
+        return String((call.arguments as { answer: string }).answer);
+      }
       const tool = byName.get(call.name);
       const result = tool
         ? await runTool(tool, call.arguments)
