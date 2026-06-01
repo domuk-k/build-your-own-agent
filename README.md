@@ -34,13 +34,13 @@ git checkout main                     # 최종 완성본으로 복귀
 
 ```bash
 npm install
-npm test            # 12개 테스트, API 키 없이 오프라인 동작
-cp .env.example .env  # OPENAI_API_KEY 입력
+npm test              # 12개 테스트, API 키 없이 오프라인 동작
+cp .env.example .env  # 키 입력 (.env.example에 무료 OpenRouter 설정 포함)
 npm run example:tool  # ToolCallingAgent 실행
 npm run example:code  # CodeAgent 실행
 ```
 
-타입체크는 `npm run typecheck` (네이티브 `tsgo`).
+**무료로 돌리기:** OpenAI 호환 엔드포인트면 무엇이든 됩니다. `.env.example`의 OpenRouter 무료 모델 설정을 쓰면 비용 없이 실행할 수 있어요(키만 발급). CodeAgent는 아무 모델이나, ToolCallingAgent는 tool calling 지원 무료 모델이 필요합니다. 타입체크는 `npm run typecheck` (네이티브 `tsgo`).
 
 ---
 
@@ -73,12 +73,12 @@ Each lesson's writeup is in `lessons/NN-*.md` (Korean + English).
 ```bash
 npm install
 npm test               # 12 tests, run offline with no API key
-cp .env.example .env   # add OPENAI_API_KEY
+cp .env.example .env   # add a key (.env.example includes a free OpenRouter setup)
 npm run example:tool   # run the ToolCallingAgent
 npm run example:code   # run the CodeAgent
 ```
 
-Type-check with `npm run typecheck` (native `tsgo`).
+**Run it for free:** any OpenAI-compatible endpoint works. Use the OpenRouter free-model setup in `.env.example` to run at no cost (just grab a key). The CodeAgent works on any model; the ToolCallingAgent needs a free model that supports tool calling. Type-check with `npm run typecheck` (native `tsgo`).
 
 ---
 
