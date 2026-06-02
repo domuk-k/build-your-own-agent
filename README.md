@@ -42,7 +42,7 @@ npm run example:tool  # ToolCallingAgent 실행
 npm run example:code  # CodeAgent 실행
 ```
 
-**무료로 돌리기:** OpenAI 호환 엔드포인트면 무엇이든 됩니다. `.env.example`의 OpenRouter 무료 모델 설정을 쓰면 비용 없이 실행할 수 있어요(키만 발급). CodeAgent는 아무 모델이나, ToolCallingAgent는 tool calling 지원 무료 모델이 필요합니다. 타입체크는 `npm run typecheck` (네이티브 `tsgo`).
+**무료로 돌리기:** OpenAI 호환 엔드포인트면 무엇이든 됩니다. 무료 티어 안에서 강의 전체를 여러 번 돌리고도 남아요 — Vercel AI Gateway는 매월 $5 크레딧을 주는데 예제 1회 실행이 0.01센트 미만이라 사실상 수만 번 가능하고, OpenRouter 무료 모델은 비용이 아예 0입니다. `.env.example`에서 설정을 고르세요. CodeAgent는 아무 모델이나, ToolCallingAgent는 tool calling 지원 모델이 필요합니다. 타입체크는 `npm run typecheck` (네이티브 `tsgo`).
 
 ---
 
@@ -80,7 +80,7 @@ npm run example:tool   # run the ToolCallingAgent
 npm run example:code   # run the CodeAgent
 ```
 
-**Run it for free:** any OpenAI-compatible endpoint works. Use the OpenRouter free-model setup in `.env.example` to run at no cost (just grab a key). The CodeAgent works on any model; the ToolCallingAgent needs a free model that supports tool calling. Type-check with `npm run typecheck` (native `tsgo`).
+**Run it for free:** any OpenAI-compatible endpoint works, and free tiers cover the whole course many times over. Vercel AI Gateway includes a $5/month credit — and since one example run costs well under a hundredth of a cent, that's effectively tens of thousands of runs; OpenRouter free models cost nothing at all. Pick a setup in `.env.example`. The CodeAgent works on any model; the ToolCallingAgent needs one that supports tool calling. Type-check with `npm run typecheck` (native `tsgo`).
 
 ---
 
