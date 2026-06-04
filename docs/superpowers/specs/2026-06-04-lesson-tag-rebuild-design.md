@@ -54,6 +54,9 @@ d930790 lesson 12      [tag lesson-12]
 | example 진입점 | **강의마다 번호 example** (examples/NN-*.ts, lessons/NN-*.md 와 1:1, 누적) |
 | 검증 깊이 | **Live API 호출 포함** (gateway .env, 호출 간격으로 429 회피) |
 | 안전장치 | **백업 ref 생성 후 로컬 재빌드**, push/force-push 는 사용자가 직접 |
+| example naming | **번호 스킴 rename** (`tool-agent.ts`→`05-tool-calling-agent.ts`, `code-agent.ts`→`11-code-agent.ts`) |
+| 검증 깊이(세부) | **대표 샘플 live**(01·05·11) + 나머지 test+typecheck (04·10 은 API 불필요라 항상 로컬 검증) |
+| 백업 ref | **`backup/lesson-NN`, 로컬만** (원격 push 안 함) |
 
 ## 4. 목표 히스토리 (재작성 후)
 
@@ -94,15 +97,16 @@ d930790 lesson 12      [tag lesson-12]
   example 이 무한루프 없이 동작.
 - `package.json` 의 `scripts` 블록은 각 lesson 커밋에서 `example:NN` 가 점진 추가된다.
 
-### naming 결정 필요 (스펙 리뷰에서 확정)
+### naming 결정 (확정: 번호 스킴 rename)
 
 기존 example 파일은 `examples/tool-agent.ts`, `examples/code-agent.ts`(번호 없음).
-번호 매칭 스킴(`examples/05-tool-calling-agent.ts`, `examples/11-code-agent.ts`)으로
-통일하려면 이 둘을 **rename** 하고 `package.json` 스크립트(`example:tool`/`example:code`)와
-README 참조를 갱신해야 한다.
+**번호 매칭 스킴으로 통일**한다: `tool-agent.ts`→`examples/05-tool-calling-agent.ts`,
+`code-agent.ts`→`examples/11-code-agent.ts`. lessons/NN ↔ examples/NN 1:1, 학습 동선 일관.
 
-- **권장**: 번호 스킴으로 통일(lessons/NN ↔ examples/NN 1:1, 학습 동선 일관).
-  → 기존 `example:tool`/`example:code` 는 `example:05`/`example:11` 로 대체(또는 alias 유지).
+- `package.json` 스크립트 `example:tool`/`example:code` 는 `example:05`/`example:11` 로 대체.
+  이 rename 은 해당 example 이 **태생하는 lesson 커밋**(05, 11)에서 일어나야 한다 —
+  즉 재작성 시 그 시점부터 번호 파일명으로 존재(이후 main 에서 rename 하는 게 아님).
+- README 의 example 참조(`example:tool`/`example:code`, 파일 경로)도 갱신.
 - `examples/self-repair-demo.ts` 는 lesson-12 이후 추가물(범위 밖)이라 그대로 둔다 —
   어떤 lesson 태그에도 넣지 않음(main 에만 존재).
 
@@ -129,14 +133,14 @@ git add -A && git commit --amend --no-edit
 
 ### 백업
 
-force-push 전, 기존 11개 태그를 백업 ref 로 보존:
+force-push 전, 기존 11개 태그를 백업 ref 로 보존(**확정: `backup/lesson-NN`, 로컬만**):
 
 ```
 for t in $(git tag -l 'lesson-*'); do git tag "backup/$t" "$t"; done
-# (또는 lesson-NN-old 네이밍)
 ```
 
-원격 백업이 필요하면 백업 ref 도 별도 push(사용자 결정).
+- `backup/` 네임스페이스라 `git tag -l 'lesson-*'` 결과를 오염시키지 않는다.
+- 원격 push 안 함(공개 레포에 backup 태그 노출 회피). 로컬에서만 복구 ref 로 보존.
 
 ### 재빌드 범위
 
@@ -153,9 +157,9 @@ for t in $(git tag -l 'lesson-*'); do git tag "backup/$t" "$t"; done
 2. 해당 강의 example 을 gateway `.env`(`OPENAI_BASE_URL=...`)로 실행 →
    base URL 이 수동패치 없이 동작함을 확인(핸드오프 item 4).
    - Live API example 은 무료티어 429 회피를 위해 **호출 간격**을 둔다.
-   - 04(tool 정의), 10(sandbox)는 API 불필요 → quota 없이 검증.
-   - quota 우려 시 대표 태그(01 naked / 05 tool-agent / 11 code-agent)만 live,
-     나머지는 test+typecheck 로 샘플링 가능(스펙 리뷰에서 확정).
+   - 04(tool 정의), 10(sandbox)는 API 불필요 → quota 없이 항상 검증.
+   - **확정**: 대표 태그(01 naked / 05 tool-agent / 11 code-agent)만 live 검증,
+     나머지 태그는 test+typecheck 로 검증(무료티어 quota·시간 절약).
 
 ## 7. force-push 영향 최소화
 
@@ -171,8 +175,13 @@ for t in $(git tag -l 'lesson-*'); do git tag "backup/$t" "$t"; done
   는 이미 완료·커밋됨. lesson 태그에 편입하지 않고 main 후행 커밋으로 유지.
 - base URL 픽스 구현 자체(44b1242)는 이미 존재 — 새로 구현하지 않고 시점만 이동.
 
-## 9. 미결 (스펙 리뷰에서 확정)
+## 9. 스펙 리뷰 결과 (2026-06-05 확정)
 
-- (a) example naming: 번호 스킴으로 기존 2개 rename(권장) vs 기존 이름 유지.
-- (b) 검증에서 live API 를 전 태그에 돌릴지 vs 대표 샘플 + 나머지 test.
-- (c) 백업 ref 네이밍(`backup/lesson-NN` vs `lesson-NN-old`)과 원격 push 여부.
+- (a) example naming: **번호 스킴 rename**. `tool-agent.ts`→`05-tool-calling-agent.ts`,
+  `code-agent.ts`→`11-code-agent.ts`. 해당 lesson 커밋(05·11)에서 번호 파일명으로 태생,
+  `package.json` 스크립트는 `example:05`/`example:11`, README 참조 갱신.
+- (b) 검증: **대표 샘플 live**(01·05·11) + 나머지 태그 test+typecheck. 04·10 은 API
+  불필요라 항상 로컬 검증.
+- (c) 백업 ref: **`backup/lesson-NN`, 로컬만**(원격 push 안 함).
+
+→ 미결 0. 다음 단계: writing-plans 로 실행 계획 작성.
